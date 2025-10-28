@@ -1,0 +1,50 @@
+EduZen Agency - Business Summary
+
+Company Overview:
+EduZen is an innovative education-focused agency that provides flexible, community-driven educational services with a unique pay-when-you-succeed model.
+
+Leadership:
+- Ahmad Mustapha - BDFL (Benevolent Dictator For Life)
+
+Services Offered:
+
+1. Student-Teacher Matching (Grades 1-12)
+   - Platform: WhatsApp group "telmiz w istez"
+   - Target: Grade 1-12 students
+   - Cost: Free for students
+   - Revenue: Teachers pay 20% of their first paycheck upon successful matching
+   - Required Information: Name, email, language, subjects, grade, location
+
+2. University Student-Teacher Matching
+   - Platform: WhatsApp group "taleb w istez"
+   - Target: University students
+   - Cost: Free for students
+   - Revenue: Teachers pay 20% of their first paycheck upon successful matching
+   - Required Information: Name, email, language, subjects, university level, location
+
+3. Educational Program Advertisement
+   - Platform: WhatsApp group "motadareb w khabeer"
+   - Service: Advertising workshops, bootcamps, and educational programs
+   - Revenue: 10% commission from program providers for each registered attendee
+
+4. Language Teaching Services
+   - Languages: English, Arabic, German, French, Spanish
+   - Features: Flexible hours, expert language instructors
+   - Target: All levels and age groups
+
+5. International University Applications
+   - Service: Application assistance for international universities
+   - Pricing: Flat fees
+   - Payment: Only upon acceptance
+
+Unique Value Proposition:
+- Flexibility in service delivery
+- Pay-only-when-you-get-paid model
+- Community-driven approach
+- Success-based pricing structure
+
+Mission:
+To democratize access to quality education by connecting students with qualified teachers and educational opportunities through an accessible, community-based platform.
+
+Vision:
+To become the leading educational matchmaking and services platform in the region, fostering educational excellence through innovative, flexible solutions.

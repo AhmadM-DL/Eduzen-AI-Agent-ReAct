@@ -1,0 +1,5 @@
+openai
+gradio
+pandas
+openpyxl
+python-dotenv
