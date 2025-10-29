@@ -3,3 +3,8 @@ gradio
 pandas
 openpyxl
 python-dotenv
+ipykernel
+langgraph
+langchain
+langchain-openai
+langchain-core

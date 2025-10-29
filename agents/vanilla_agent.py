@@ -3,26 +3,18 @@ import os
 import json
 from typing import List, Dict, Any, Optional
 from dotenv import load_dotenv
-from tools import TOOLS_DEFINITIONS, AVAILABLE_FUNCTIONS
+from agents.tools import TOOLS_DEFINITIONS, AVAILABLE_FUNCTIONS
 
 # Load environment variables
 load_dotenv()
 
-class EduZenAgent:
+class EduZenVanillaAgent:
     def __init__(self):
-        """Initialize the EduZen AI agent with OpenAI client and business context."""
+
         self.client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-        self.business_summary = self._load_business_summary()
+        self.business_summary = open("./me/business_summary.txt", "r", encoding="utf-8") .read()
         self.system_prompt = self._create_system_prompt()
         
-    def _load_business_summary(self) -> str:
-        """Load business summary from the me/business_summary.txt file."""
-        try:
-            with open("me/business_summary.txt", "r", encoding="utf-8") as file:
-                return file.read()
-        except FileNotFoundError:
-            return "EduZen is an educational services agency focused on connecting students with teachers and educational opportunities."
-    
     def _create_system_prompt(self) -> str:
         """Create the system prompt with business context."""
         return f"""You are EduZen Assistant, a helpful AI agent representing EduZen Agency. You help users with educational services and information.
@@ -168,9 +160,9 @@ Always be helpful and guide users toward the appropriate service!"""
         """
         return self.chat_simple(message, history)
 
-def create_agent() -> EduZenAgent:
+def create_agent() -> EduZenVanillaAgent:
     """Create and return a new EduZen agent instance."""
-    return EduZenAgent()
+    return EduZenVanillaAgent()
 
 # Test function
 def test_agent():

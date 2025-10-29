@@ -1,8 +1,8 @@
 import gradio as gr
-from agent import create_agent
+from vanilla_agent import create_agent
 from typing import List, Tuple, Dict
 import pandas as pd
-from xlsx import get_student_leads, get_workshop_leads, get_feedback_data
+from utils.xlsx import get_student_leads, get_workshop_leads, get_feedback_data
 
 # Initialize the agent
 agent = create_agent()

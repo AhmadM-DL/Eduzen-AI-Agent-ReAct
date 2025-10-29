@@ -1,7 +1,9 @@
 import json
 from typing import Dict, Any, List
-from xlsx import save_student_lead, save_workshop_lead, save_feedback
+from langchain_core.tools import tool
+from utils.xlsx import save_student_lead, save_workshop_lead, save_feedback
 
+@tool
 def record_students_lead(
     name: str,
     email: str,
@@ -52,6 +54,7 @@ def record_students_lead(
     except Exception as e:
         return f"❌ Error: {str(e)}. Please check your information and try again."
 
+@tool
 def record_workshops_lead(
     organization_name: str,
     contact_person: str,
@@ -109,6 +112,7 @@ def record_workshops_lead(
     except Exception as e:
         return f"❌ Error: {str(e)}. Please check your information and try again."
 
+@tool
 def record_feedback(
     user_question: str,
     category: str = "general",
