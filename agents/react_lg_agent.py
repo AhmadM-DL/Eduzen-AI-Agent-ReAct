@@ -22,13 +22,29 @@ class AgentState(TypedDict):
     is_final: bool
 
 class EduZenReActAgent:
-    def __init__(self, personality):
+    def __init__(self, personality, model="gpt-4", temperature=0.7, top_p=1.0, max_tokens=None):
         
-        self.llm = ChatOpenAI(
-            model="gpt-4",
-            temperature=0.7,
-            api_key=os.getenv("OPENAI_API_KEY")
-        )
+        # Store configuration parameters
+        self.config = {
+            "model": model,
+            "temperature": temperature,
+            "top_p": top_p,
+            "max_tokens": max_tokens
+        }
+        
+        # Initialize LLM with configurable parameters
+        llm_params = {
+            "model": model,
+            "temperature": temperature,
+            "top_p": top_p,
+            "api_key": os.getenv("OPENAI_API_KEY")
+        }
+        
+        # Only add max_tokens if it's specified
+        if max_tokens is not None:
+            llm_params["max_tokens"] = max_tokens
+            
+        self.llm = ChatOpenAI(**llm_params)
         
         self.personality = personality
         self.business_summary = self._load_business_summary()
@@ -176,5 +192,34 @@ class EduZenReActAgent:
             print(f"Error clearing history for thread '{thread_id}': {e}")
             return False
 
-def create_agent(personality):
-    return EduZenReActAgent(personality)
+    def get_config(self) -> Dict[str, Any]:
+        """Get current configuration parameters."""
+        return self.config.copy()
+    
+    def update_config(self, **kwargs) -> None:
+        """Update configuration parameters and reinitialize LLM."""
+        valid_params = ["model", "temperature", "top_p", "max_tokens"]
+        
+        for key, value in kwargs.items():
+            if key in valid_params:
+                self.config[key] = value
+        
+        # Reinitialize LLM with updated parameters
+        llm_params = {
+            "model": self.config["model"],
+            "temperature": self.config["temperature"],
+            "top_p": self.config["top_p"],
+            "api_key": os.getenv("OPENAI_API_KEY")
+        }
+        
+        if self.config["max_tokens"] is not None:
+            llm_params["max_tokens"] = self.config["max_tokens"]
+            
+        self.llm = ChatOpenAI(**llm_params)
+        self.llm_with_tools = self.llm.bind_tools(self.tools)
+        
+        # Rebuild the graph with updated LLM
+        self.graph = self._build_graph()
+
+def create_agent(personality, **config):
+    return EduZenReActAgent(personality, **config)
