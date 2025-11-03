@@ -4,52 +4,49 @@ import json
 from typing import List, Dict, Any, Optional
 from dotenv import load_dotenv
 from agents.tools import TOOLS_DEFINITIONS, AVAILABLE_FUNCTIONS
+from agents.tools import record_students_lead, record_workshops_lead, record_feedback
+
 
 # Load environment variables
 load_dotenv()
 
 class EduZenVanillaAgent:
-    def __init__(self):
-
+    def __init__(self, personality="formal"):
         self.client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-        self.business_summary = open("./me/business_summary.txt", "r", encoding="utf-8") .read()
+        self.personality = personality
+        self.business_summary = self._load_business_summary()
+        self.instructions = self._load_instructions()
+        self.personality_style = self._load_personality(personality)
         self.system_prompt = self._create_system_prompt()
         
+    def _load_business_summary(self) -> str:
+        try:
+            file_path = os.path.join("..", "me", "business_summary.txt")
+            with open(file_path, "r", encoding="utf-8") as f:
+                return f.read().strip()
+        except FileNotFoundError:
+            return "EduZen Agency - Educational services provider"
+    
+    def _load_instructions(self) -> str:
+        try:
+            file_path = os.path.join("..", "prompts", "instructions.txt")
+            with open(file_path, "r", encoding="utf-8") as f:
+                return f.read().strip()
+        except FileNotFoundError:
+            return "Provide helpful assistance with educational services."
+    
+    def _load_personality(self, personality: str) -> str:
+        try:
+            file_path = os.path.join("..", "prompts", "personalities", f"{personality}.txt")
+            with open(file_path, "r", encoding="utf-8") as f:
+                return f.read().strip()
+        except FileNotFoundError:
+            return "Be helpful and professional."
+
     def _create_system_prompt(self) -> str:
-        """Create the system prompt with business context."""
-        return f"""You are EduZen Assistant, a helpful AI agent representing EduZen Agency. You help users with educational services and information.
-
-BUSINESS CONTEXT:
-{self.business_summary}
-
-YOUR ROLE:
-- Provide information about EduZen's services
-- Help students register for teacher matching
-- Assist educational program providers with advertising inquiries
-- Answer questions about pricing, processes, and services
-- Collect leads for appropriate services
-- Record feedback for questions you cannot answer
-
-COMMUNICATION STYLE:
-- Be friendly, professional, and helpful
-- Use clear, simple language
-- Always mention the unique value proposition (pay only when successful)
-- Emphasize the community-driven aspect
-- Be enthusiastic about educational opportunities
-
-Always be helpful and guide users toward the appropriate service!"""
+         return f" {self.business_summary} \n {self.instructions} \n {self.personality_style}"
 
     def chat(self, message: str, history: List[Dict[str, str]] = None) -> tuple[str, List[Dict[str, str]]]:
-        """
-        Process a chat message and return both response and updated history.
-        
-        Args:
-            message: User's message
-            history: Previous conversation history
-            
-        Returns:
-            tuple: (response_message, updated_history)
-        """
         if history is None:
             history = []
         
@@ -90,7 +87,8 @@ Always be helpful and guide users toward the appropriate service!"""
                     
                     # Call the function
                     if function_name in AVAILABLE_FUNCTIONS:
-                        function_response = AVAILABLE_FUNCTIONS[function_name](**function_args)
+                        tool = AVAILABLE_FUNCTIONS[function_name]
+                        function_response = tool.invoke(function_args)
                         
                         # Add function response to messages
                         messages.append({
@@ -133,55 +131,5 @@ Always be helpful and guide users toward the appropriate service!"""
             })
             return error_message, updated_history
 
-    def chat_simple(self, message: str, history: List[Dict[str, str]] = None) -> str:
-        """
-        Process a chat message and return only the response (legacy method).
-        
-        Args:
-            message: User's message
-            history: Previous conversation history
-            
-        Returns:
-            str: Agent's response
-        """
-        response, _ = self.chat(message, history)
-        return response
-
-    def get_response(self, message: str, history: List[Dict[str, str]] = None) -> str:
-        """
-        Simplified interface for getting a response (legacy method).
-        
-        Args:
-            message: User's message
-            history: Previous conversation history
-            
-        Returns:
-            str: Agent's response
-        """
-        return self.chat_simple(message, history)
-
-def create_agent() -> EduZenVanillaAgent:
-    """Create and return a new EduZen agent instance."""
-    return EduZenVanillaAgent()
-
-# Test function
-def test_agent():
-    """Test the agent with sample interactions."""
-    agent = create_agent()
-    
-    print("EduZen Agent Test")
-    print("================")
-    
-    test_messages = [
-        "Hi! What services does EduZen offer?",
-        "I'm a grade 10 student looking for help with math and physics. Can you help me find a teacher?",
-        "We have a programming bootcamp we'd like to advertise. How does that work?"
-    ]
-    
-    for msg in test_messages:
-        print(f"\nUser: {msg}")
-        response, history = agent.chat(msg, history)
-        print(f"Agent: {response}")
-
-if __name__ == "__main__":
-    test_agent()
+def create_agent(personality: str = "formal") -> EduZenVanillaAgent:
+    return EduZenVanillaAgent(personality)
